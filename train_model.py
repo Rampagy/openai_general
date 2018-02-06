@@ -9,7 +9,7 @@ env = gym.make('Acrobot-v1')
 train_count = 0
 
 # train to 500 until the average is above 500
-while(em.EvalModel(model, env) < 495):
+while(em.EvalModel(model, env) < -100):
     max_reward = -600
 
     # run a segment of 200 'games' and train off of the max score
@@ -40,12 +40,13 @@ while(em.EvalModel(model, env) < 495):
         print('Episode {} scored {}, max {}'.format(i, cumulative_reward, max_reward))
 
         if max_reward >= 500:
-            # if 500 has already been acheived
+            # if perfect score has already been acheived
             break
 
-    train_count += 1
-    # train the dnn
-    model.train_game(max_obs_log, max_action_log)
+    if max_reward > -500:
+        train_count += 1
+        # train the dnn
+        model.train_game(max_obs_log, max_action_log)
 
 
 print('{} training episodes'.format(train_count))

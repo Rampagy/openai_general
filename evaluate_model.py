@@ -12,7 +12,7 @@ def EvalModel(model, env=gym.make('Acrobot-v1')):
         done = False
 
         while not done:
-            if i < 5:
+            if i < 2:
                 # render for viewing experience
                 env.render()
 

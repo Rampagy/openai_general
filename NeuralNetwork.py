@@ -9,17 +9,10 @@ import os
 
 class Control_Model():
     def __init__(self):
-        # create current baord state
-        self.current_observs = np.zeros(shape=(1, 6), dtype=np.float32)
-
         # Building convolutional network
-        network = input_data(shape=[None, 6], name='input')
-        network = fully_connected(network, 256, activation='relu')
-        network = dropout(network, 0.6)
-        network = fully_connected(network, 256, activation='relu')
-        network = dropout(network, 0.6)
-        network = fully_connected(network, 256, activation='relu')
-        network = dropout(network, 0.6)
+        network = input_data(shape=[None, 10, 6, 1], name='input')
+        network = conv_2d(network, 16, 2, activation='relu')
+        network = conv_2d(network, 32, 2, activation='relu')
         network = fully_connected(network, 256, activation='relu')
         network = dropout(network, 0.6)
         network = fully_connected(network, 256, activation='relu')
@@ -40,11 +33,7 @@ class Control_Model():
 
     def predict_move(self, observations, train=True):
         if self.has_weights:
-            # reshape the board_state
-            self.current_observs = np.array(observations,
-                dtype=np.float32, ndmin=2)
-
-            position_probabilities = self.model.predict(self.current_observs)
+            position_probabilities = self.model.predict(observations)
             position_probabilities = np.squeeze(position_probabilities)
 
             if not train:

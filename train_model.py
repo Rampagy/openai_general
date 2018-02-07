@@ -1,6 +1,7 @@
 import gym
 import NeuralNetwork as nn
 import evaluate_model as em
+import numpy as np
 
 
 # create model
@@ -14,18 +15,22 @@ while(em.EvalModel(model, env) < -100):
 
     # run a segment of 200 'games' and train off of the max score
     for i in range(200):
-        observation = env.reset()
-
         cumulative_reward = 0
         obs_log = []
         action_log = []
         done = False
+        obs_img = np.zeros((1, 10, 6, 1))
+
+        observation = env.reset()
 
         while not done:
-            action = model.predict_move(observation)
+            obs_img = np.roll(obs_img, 1, axis=1)
+            obs_img[0, 0, :, 0] = observation
+
+            action = model.predict_move(obs_img)
 
             # keep a log of actions and observations
-            obs_log += [observation]
+            obs_log += [np.squeeze(obs_img, axis=0)]
             action_log += [action]
 
             # use action to make a move

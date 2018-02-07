@@ -19,18 +19,20 @@ while(em.EvalModel(model, env) < -100):
         obs_log = []
         action_log = []
         done = False
-        obs_img = np.zeros((1, 10, 6, 1))
+        obs_img = np.zeros((10, 6))
 
         observation = env.reset()
 
         while not done:
-            obs_img = np.roll(obs_img, 1, axis=1)
-            obs_img[0, 0, :, 0] = observation
+            obs_img = np.roll(obs_img, 1, axis=0)
+            obs_img[0, :] = observation
 
-            action = model.predict_move(obs_img)
+            reshaped = obs_img.reshape((1, 60))
+
+            action = model.predict_move(reshaped)
 
             # keep a log of actions and observations
-            obs_log += [np.squeeze(obs_img, axis=0)]
+            obs_log += [reshaped.flatten()]
             action_log += [action]
 
             # use action to make a move

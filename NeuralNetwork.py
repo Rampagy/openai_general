@@ -10,9 +10,11 @@ import os
 class Control_Model():
     def __init__(self):
         # Building convolutional network
-        network = input_data(shape=[None, 10, 6, 1], name='input')
-        network = conv_2d(network, 16, 2, activation='relu')
-        network = conv_2d(network, 32, 2, activation='relu')
+        network = input_data(shape=[None, 6*10], name='input')
+        network = fully_connected(network, 256, activation='relu')
+        network = dropout(network, 0.6)
+        network = fully_connected(network, 256, activation='relu')
+        network = dropout(network, 0.6)
         network = fully_connected(network, 256, activation='relu')
         network = dropout(network, 0.6)
         network = fully_connected(network, 256, activation='relu')

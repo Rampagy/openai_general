@@ -9,7 +9,7 @@ def EvalModel(model, env=gym.make('Acrobot-v1')):
 
     for i in range(num_of_games):
         done = False
-        obs_img = np.zeros((1, 10, 6, 1))
+        obs_img = np.zeros((10, 6))
 
         observation = env.reset()
 
@@ -18,10 +18,12 @@ def EvalModel(model, env=gym.make('Acrobot-v1')):
                 # render for viewing experience
                 env.render()
 
-            obs_img = np.roll(obs_img, 1, axis=1)
-            obs_img[0, 0, :, 0] = observation
+            obs_img = np.roll(obs_img, 1, axis=0)
+            obs_img[0, :] = observation
 
-            action = model.predict_move(obs_img, train=False)
+            reshaped = obs_img.reshape((1, 60))
+
+            action = model.predict_move(reshaped, train=False)
 
             # use action to make a move
             observation, reward, done, info = env.step(action)

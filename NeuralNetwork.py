@@ -8,9 +8,12 @@ from tflearn.data_utils import to_categorical
 import os
 
 class Control_Model():
-    def __init__(self):
+    def __init__(self, input_len, output_len):
+
+        self.out_classes = output_len
+
         # Building convolutional network
-        network = input_data(shape=[None, 6*10], name='input')
+        network = input_data(shape=[None, input_len], name='input')
         network = fully_connected(network, 256, activation='relu')
         network = dropout(network, 0.6)
         network = fully_connected(network, 256, activation='relu')
@@ -19,7 +22,7 @@ class Control_Model():
         network = dropout(network, 0.6)
         network = fully_connected(network, 256, activation='relu')
         network = dropout(network, 0.6)
-        network = fully_connected(network, 2, activation='softmax')
+        network = fully_connected(network, output_len, activation='softmax')
         network = regression(network, optimizer='adam', learning_rate=0.001,
                              loss='categorical_crossentropy', name='target')
 
@@ -60,12 +63,12 @@ class Control_Model():
 
             return move
         else:
-            return np.random.randint(0, 2)
+            return None
 
 
     def train_game(self, features, labels):
         # Train the model
-        labels = to_categorical(y=labels, nb_classes=2)
+        labels = to_categorical(y=labels, nb_classes=self.out_classes)
         self.model.fit({'input': features}, {'target': labels}, n_epoch=5,
                   show_metric=False, batch_size=100, run_id='tensorboard_log',
                   shuffle=True)
